@@ -152,7 +152,7 @@ resource "rancher2_node_pool" "worker" {
   worker           = true
 }
 
-#resource "rancher2_cluster_sync" "cluster" {
-#  cluster_id = rancher2_cluster.cluster_ec2.id
-#  node_pool_ids = [rancher2_node_pool.ctrl.id, rancher2_node_pool.etcd.id, rancher2_node_pool.worker.id ]
-#}
+resource "rancher2_cluster_sync" "cluster" {
+  cluster_id    = rancher2_cluster.cluster_ec2.id
+  node_pool_ids = [rancher2_node_pool.ctrl.id, rancher2_node_pool.etcd.id, rancher2_node_pool.worker.id]
+}
