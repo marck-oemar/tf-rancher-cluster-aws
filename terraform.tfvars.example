@@ -1,0 +1,44 @@
+# clustername that should be unique. all relevant AWS resources will have this clustername in it's resource name
+clustername = "test10"
+
+
+### AWS specific variables
+
+# ami used to deploy ec2 nodes, for instance the rancheros ami
+ami = "ami-0cea454c576ececbd"
+
+# ssh user of the ami
+ami-ssh-user = "rancher"
+
+# aws region to deploy in 
+aws-region = "eu-west-1"
+
+# zone to deploy in 
+aws-zone = "a"
+
+# AWS subnet to deploy resources in
+subnet_id = ""
+
+# VPC tag to identify the deployment vpc. For this the VPC must be tagged accordingly.
+vpc_tag = ""
+
+# IAM instance profile for node controlplane
+controlplane-node-iam-instance-profile = 
+
+# IAM instance profile for node etcd
+etcd-node-iam-instance-profile =
+
+# IAM instance profile for node worker
+worker-node-iam-instance-profile = 
+
+
+### Rancher specific variables
+
+# existing Rancher AWS cloud credential
+rancher-aws-cloud-credential-name = ""
+
+# existing rancher API token to be used to manage Rancher resources
+rancher-token = ""
+
+# API url of the Rancher service
+rancher-url = ""

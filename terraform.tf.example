@@ -1,0 +1,16 @@
+terraform {
+  # Configure a remote state backend, for instance with AWS S3.
+  backend "s3" {
+    bucket               = ""
+    key                  = ""
+    region               = ""
+    encrypt              = false
+    workspace_key_prefix = ""
+  }
+  required_providers {
+    rancher2 = {
+      source  = "rancher/rancher2"
+      version = "~> 1.13"
+    }
+  }
+}
