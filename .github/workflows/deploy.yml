@@ -129,8 +129,8 @@ jobs:
           kubectl get service hello-kubernetes-my-hello-kubernetes
           kubectl get service hello-kubernetes-my-hello-kubernetes -o json | jq -r '.status.loadBalancer.ingress[0].hostname' > aws_lb_hostname.txt
           kubectl get service hello-kubernetes-my-hello-kubernetes -o json | jq -r '.spec.ports[0].port' > aws_lb_port.txt
-          echo "lets wait a bit until the AWS L4 Loadbalancer has a healthy state"
-          sleep 30
+          echo "lets wait 120 sec until the AWS L4 Loadbalancer has all the clusternodes registered and healthy"
+          sleep 120
 
       - name: "Upload aws_lb_hostname"
         uses: actions/upload-artifact@v2
