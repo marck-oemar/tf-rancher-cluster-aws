@@ -33,11 +33,13 @@ variable "dockerurl" {
 variable "rancher_aws_cloud_credential_name" {
   type        = string
   description = "Existing Rancher AWS Cloud credential name. Related to AWS credential keys of powerful role, to create AWS resources for RKE"
+  sensitive   = true
 }
 
 variable "rancher_url" {
   type        = string
   description = "rancher url"
+  sensitive   = true
 }
 
 variable "rancher_token" {
@@ -64,7 +66,8 @@ variable "aws-region" {
 }
 
 variable "vpc_tag" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "subnet_id" {
@@ -78,13 +81,16 @@ variable "aws-zone" {
 
 #### Variables for Amazon Cloud Provider https://rancher.com/docs/rancher/v2.x/en/cluster-provisioning/rke-clusters/cloud-providers/amazon/ 
 variable "controlplane_node_iam_instance_profile" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "etcd_node_iam_instance_profile" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "worker_node_iam_instance_profile" {
-  type = string
+  type      = string
+  sensitive = true
 }
