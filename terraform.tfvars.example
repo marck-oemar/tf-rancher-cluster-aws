@@ -23,22 +23,22 @@ subnet_id = ""
 vpc_tag = ""
 
 # IAM instance profile for node controlplane
-controlplane-node-iam-instance-profile = 
+controlplane_node_iam_instance_profile = 
 
 # IAM instance profile for node etcd
-etcd-node-iam-instance-profile =
+etcd_node_iam_instance_profile =
 
 # IAM instance profile for node worker
-worker-node-iam-instance-profile = 
+worker_node_iam_instance_profile = 
 
 
 ### Rancher specific variables
 
 # existing Rancher AWS cloud credential
-rancher-aws-cloud-credential-name = ""
+rancher_aws_cloud_credential_name = ""
 
 # existing rancher API token to be used to manage Rancher resources
-rancher-token = ""
+rancher_token = ""
 
 # API url of the Rancher service
-rancher-url = ""
+rancher_url = ""

@@ -67,7 +67,7 @@ resource "rancher2_node_template" "marck-rancher-controlplane" {
     zone                 = var.aws-zone
     root_size            = 16
     instance_type        = "t2.medium"
-    iam_instance_profile = var.controlplane-node-iam-instance-profile
+    iam_instance_profile = var.controlplane_node_iam_instance_profile
   }
 }
 
@@ -85,7 +85,7 @@ resource "rancher2_node_template" "marck-rancher-etcd" {
     zone                 = var.aws-zone
     root_size            = 16
     instance_type        = "t2.medium"
-    iam_instance_profile = var.etcd-node-iam-instance-profile
+    iam_instance_profile = var.etcd_node_iam_instance_profile
   }
 }
 
@@ -103,7 +103,7 @@ resource "rancher2_node_template" "marck-rancher-worker" {
     zone                 = var.aws-zone
     root_size            = 16
     instance_type        = "t2.medium"
-    iam_instance_profile = var.worker-node-iam-instance-profile
+    iam_instance_profile = var.worker_node_iam_instance_profile
   }
 }
 
