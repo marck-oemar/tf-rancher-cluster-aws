@@ -39,9 +39,9 @@ jobs:
           TERRAFORM_BACKEND_S3_KEY: ${{ secrets.TERRAFORM_BACKEND_S3_KEY }}
           TERRAFORM_BACKEND_S3_PREFIX: ${{ secrets.TERRAFORM_BACKEND_S3_PREFIX }}
 
-      - name: terraform plan
+      - name: terraform apply-auto-approve
         run: |
-          terraform plan \
+          terraform apply -auto-approve \
         env:
           TF_VAR_clustername: "master-staging"
           TF_VAR_controlplane_node_iam_instance_profile: ${{ secrets.TF_VAR_CONTROLPLANE_NODE_IAM_INSTANCE_PROFILE }}
