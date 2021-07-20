@@ -57,6 +57,10 @@ Simply assign the variables and terraform apply.
 
 Also, deleting the Security Group will take a while because of referenced EC2 instances. AWS takes a few minutes to completely terminate and delete EC2 Instance resources.
 
+## Quirk: K8S in-tree Amazon Cloud Provider
+It basically sucks, imho.
+https://github.com/kubernetes-sigs/aws-load-balancer-controller is much smarter. TODO.
+
 ## CICD pipeline with Github Actions
 The Github Actions pipeline contains an end-2-end approach:
 - Deploy a staging RKE cluster. If this fails, we know there is a problem with the code and/or the AWS / Rancher context
