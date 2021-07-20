@@ -93,10 +93,10 @@ jobs:
 
       - name: "install chart opsmx/hello-kubernetes"
         run: |
-          ls -lah
+          chmod 600 config
           export KUBECONFIG="config"
           helm repo add opsmx https://helmcharts.opsmx.com/ 
-          helm install my-hello-kubernetes opsmx/hello-kubernetes --version 1.0.3 --wait
+          helm upgrade --install my-hello-kubernetes opsmx/hello-kubernetes --version 1.0.3 --wait
   # destroy_staging:
   #   needs: test_staging
   #   # The type of runner that the job will run on
