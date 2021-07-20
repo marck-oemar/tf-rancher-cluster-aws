@@ -44,14 +44,14 @@ jobs:
           terraform plan \
         env:
           TF_VAR_clustername: "master-staging"
-          TF_VAR_CONTROLPLANE_NODE_IAM_INSTANCE_PROFILE: ${{ secrets.TF_VAR_CONTROLPLANE_NODE_IAM_INSTANCE_PROFILE }}
-          TF_VAR_ETCD_NODE_IAM_INSTANCE_PROFILE: ${{ secrets.TF_VAR_ETCD_NODE_IAM_INSTANCE_PROFILE }}
-          TF_VAR_WORKER_NODE_IAM_INSTANCE_PROFILE: ${{ secrets.TF_VAR_WORKER_NODE_IAM_INSTANCE_PROFILE }}
-          TF_VAR_RANCHER_AWS_CLOUD_CREDENTIAL_NAME: ${{ secrets.TF_VAR_RANCHER_AWS_CLOUD_CREDENTIAL_NAME }}
-          TF_VAR_RANCHER_TOKEN: ${{ secrets.TF_VAR_RANCHER_TOKEN }}
-          TF_VAR_RANCHER_URL: ${{ secrets.TF_VAR_RANCHER_URL }}
-          TF_VAR_SUBNET_ID: ${{ secrets.TF_VAR_SUBNET_ID }}
-          TF_VAR_VPC_TAG: ${{ secrets.TF_VAR_VPC_TAG }}
+          TF_VAR_controlplane_node_iam_instance_profile: ${{ secrets.TF_VAR_CONTROLPLANE_NODE_IAM_INSTANCE_PROFILE }}
+          TF_VAR_etcd_node_iam_instance_profile: ${{ secrets.TF_VAR_ETCD_NODE_IAM_INSTANCE_PROFILE }}
+          TF_VAR_worker_node_iam_instance_profile: ${{ secrets.TF_VAR_WORKER_NODE_IAM_INSTANCE_PROFILE }}
+          TF_VAR_rancher_aws_cloud_credential_name: ${{ secrets.TF_VAR_RANCHER_AWS_CLOUD_CREDENTIAL_NAME }}
+          TF_VAR_rancher_token: ${{ secrets.TF_VAR_RANCHER_TOKEN }}
+          TF_VAR_rancher_url: ${{ secrets.TF_VAR_RANCHER_URL }}
+          TF_VAR_subnet_id: ${{ secrets.TF_VAR_SUBNET_ID }}
+          TF_VAR_vpc_tag: ${{ secrets.TF_VAR_VPC_TAG }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
