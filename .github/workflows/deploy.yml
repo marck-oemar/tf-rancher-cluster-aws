@@ -132,8 +132,32 @@ jobs:
         run: |
           pip install -r tests/requirements.txt
           URL="http://$(cat aws_lb_hostname.txt):$(cat aws_lb_port.txt)" pytest tests/selenium_test_helloworld.py
+
+  test_uninstall_hello_chart:
+    needs: test_selenium_hello
+    if: always()
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container: bskim45/helm-kubectl-jq
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: "Download kubeconfig"
+        uses: actions/download-artifact@v2
+        with:
+          name: kubeconfig
+
+      - name: "uninstall hello-kubernetes"
+        run: |
+          chmod 600 config
+          export KUBECONFIG="config"
+          helm uninstall my-hello-kubernetes 
+          echo "lets wait for the service (including AWS loadbalancer) to be deleted..."
+          sleep 30
   # destroy_staging:
-  #   needs: test_staging
+  #   needs: test_selenium_hello
   #   # The type of runner that the job will run on
   #   runs-on: ubuntu-latest
   #   container: elmoenco/tf_toolbox:latest
