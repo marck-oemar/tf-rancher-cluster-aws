@@ -8,8 +8,7 @@
 # Crash log files
 crash.log
 
-# terraform.tvars
-terraform.tfvars
+
 
 # known files created by terraform modules
 id_rsa*
@@ -21,5 +20,3 @@ vagrant/local_config.yaml
 
 # MacOS junk
 .DS_Store
-state.tf
-terraform.tf
