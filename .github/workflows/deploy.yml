@@ -58,18 +58,17 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: 'Upload kubeconfig'
-        - uses: actions/upload-artifact@v2
-          with:
-            name: kubeconfig
-            path: .kube/config
+      - name: "Upload kubeconfig"
+        uses: actions/upload-artifact@v2
+        with:
+          name: kubeconfig
+          path: .kube/config
 
-      - name: 'Upload clusterid'
-        - uses: actions/upload-artifact@v2
-          with:
-            name: clusterid
-            path: clusterid.txt
-
+      - name: "Upload clusterid"
+        uses: actions/upload-artifact@v2
+        with:
+          name: clusterid
+          path: clusterid.txt
 
   test_staging:
     # The type of runner that the job will run on
@@ -80,32 +79,22 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: 'Download kubeconfig'
+      - name: "Download kubeconfig"
         uses: actions/download-artifact@v2
         with:
           name: kubeconfig
 
       # nog nodig??????????????
-      - name: 'Download clusterid'
+      - name: "Download clusterid"
         uses: actions/download-artifact@v2
         with:
           name: clusterid
 
-      - name: 'install chart opsmx/hello-kubernetes'
+      - name: "install chart opsmx/hello-kubernetes"
         run: |
           export KUBECONFIG="./kube/config"
           helm repo add opsmx https://helmcharts.opsmx.com/ 
           helm install my-hello-kubernetes opsmx/hello-kubernetes --version 1.0.3 --wait
-
-
-
-
-
-
-
-
-
-
   # destroy_staging:
   #   # The type of runner that the job will run on
   #   runs-on: ubuntu-latest
@@ -114,7 +103,6 @@ jobs:
   #   steps:
   #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
   #     - uses: actions/checkout@v2
-
   #     - name: terraform init
   #       run: |
   #         terraform init \
@@ -128,7 +116,6 @@ jobs:
   #         TERRAFORM_BACKEND_S3_BUCKET: ${{ secrets.TERRAFORM_BACKEND_S3_BUCKET }}
   #         TERRAFORM_BACKEND_S3_KEY: ${{ secrets.TERRAFORM_BACKEND_S3_KEY }}
   #         TERRAFORM_BACKEND_S3_PREFIX: ${{ secrets.TERRAFORM_BACKEND_S3_PREFIX }}
-
   #     - name: terraform destroy
   #       run: |
   #         echo "Dirty fix for Rancher. Remove nodepools from state, so that Rancher can delete cluster and ec2 nodes"
