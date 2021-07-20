@@ -17,9 +17,8 @@ The Terraform config will create the following resources.
 - 3 node pools (controlplane, etcd, worker)
 
 ### AWS resources
-TODO: 
 - 1 cluster specific rancher-nodes Security Group
-- 3 IAM roles (and instance profile) with specific policies for controlplane, etcd, worker. These roles will be attached to the cluster nodes, and will be used by the Kubernetes Amazon Cloud Provider.
+- TODO: 3 IAM roles (and instance profile) with specific policies for controlplane, etcd, worker. These roles will be attached to the cluster nodes, and will be used by the Kubernetes Amazon Cloud Provider.
 
 ## Design
 All the heavy lifting is done by Rancher, which we expect to be available with a powerful user.
@@ -48,4 +47,11 @@ Simply assign the variables and terraform apply.
   2. terraform destroy
 
 Also, deleting the Security Group will take a while because of referenced EC2 instances. AWS takes a few minutes to completely terminate and delete EC2 Instance resources.
+
+## CICD pipeline with Github Actions
+The Github Actions pipeline contains an end-2-end approach:
+- Deploy a staging RKE cluster. If this fails, we know there is a problem with the code and/or the AWS / Rancher context
+- Deploy a hello-world application with a Service that invokes Amazon Cloud Provider to create a traditional L4 Loadbalancer as an endpoint
+- Acceptance test the application, using (overkill) Selenium
+- Clean-up
 
