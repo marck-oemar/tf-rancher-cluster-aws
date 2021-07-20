@@ -15,7 +15,6 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   deploy_staging:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -41,7 +40,10 @@ jobs:
 
       - name: terraform apply-auto-approve
         run: |
-          terraform apply -auto-approve \
+          terraform apply -auto-approve
+          echo "creating cluster tag on security group for aws cloud provider, out of band. Thanks to k8s in-tree amazon cloud provider."
+          aws ec2 create-tags --resources $(cat sgid.txt) --tags Key=kubernetes.io/cluster/$(cat clusterid.txt),Value=owned --region eu-west-1
+
         env:
           TF_VAR_clustername: "master-staging"
           TF_VAR_controlplane_node_iam_instance_profile: ${{ secrets.TF_VAR_CONTROLPLANE_NODE_IAM_INSTANCE_PROFILE }}
@@ -55,6 +57,19 @@ jobs:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: 'Upload kubeconfig'
+        - uses: actions/upload-artifact@v2
+          with:
+            name: kubeconfig
+            path: .kube/config
+
+      - name: 'Upload clusterid'
+        - uses: actions/upload-artifact@v2
+          with:
+            name: clusterid
+            path: clusterid.txt
+
 
   test_staging:
     # The type of runner that the job will run on
@@ -65,51 +80,73 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: test
-        run: |
-          echo "pseudo test: deploy test helm as smoke test"
+      - name: 'Download kubeconfig'
+        uses: actions/download-artifact@v2
+        with:
+          name: kubeconfig
 
-  destroy_staging:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-    container: elmoenco/tf_toolbox:latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      # nog nodig??????????????
+      - name: 'Download clusterid'
+        uses: actions/download-artifact@v2
+        with:
+          name: clusterid
 
-      - name: terraform init
+      - name: 'install chart opsmx/hello-kubernetes'
         run: |
-          terraform init \
-            -backend-config="bucket=${TERRAFORM_BACKEND_S3_BUCKET}" \
-            -backend-config="key=${TERRAFORM_BACKEND_S3_KEY}" \
-            -backend-config="workspace_key_prefix=${TERRAFORM_BACKEND_S3_PREFIX}"
-        env:
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          TERRAFORM_BACKEND_S3_BUCKET: ${{ secrets.TERRAFORM_BACKEND_S3_BUCKET }}
-          TERRAFORM_BACKEND_S3_KEY: ${{ secrets.TERRAFORM_BACKEND_S3_KEY }}
-          TERRAFORM_BACKEND_S3_PREFIX: ${{ secrets.TERRAFORM_BACKEND_S3_PREFIX }}
+          export KUBECONFIG="./kube/config"
+          helm repo add opsmx https://helmcharts.opsmx.com/ 
+          helm install my-hello-kubernetes opsmx/hello-kubernetes --version 1.0.3 --wait
 
-      - name: terraform destroy
-        run: |
-          echo "Dirty fix for Rancher. Remove nodepools from state, so that Rancher can delete cluster and ec2 nodes"
-          terraform state rm 'rancher2_node_pool.ctrl'
-          terraform state rm 'rancher2_node_pool.etcd'
-          terraform state rm 'rancher2_node_pool.worker'
-          echo "now lets destroy"
-          terraform destroy -auto-approve
-        env:
-          TF_VAR_clustername: "master-staging"
-          TF_VAR_controlplane_node_iam_instance_profile: ${{ secrets.TF_VAR_CONTROLPLANE_NODE_IAM_INSTANCE_PROFILE }}
-          TF_VAR_etcd_node_iam_instance_profile: ${{ secrets.TF_VAR_ETCD_NODE_IAM_INSTANCE_PROFILE }}
-          TF_VAR_worker_node_iam_instance_profile: ${{ secrets.TF_VAR_WORKER_NODE_IAM_INSTANCE_PROFILE }}
-          TF_VAR_rancher_aws_cloud_credential_name: ${{ secrets.TF_VAR_RANCHER_AWS_CLOUD_CREDENTIAL_NAME }}
-          TF_VAR_rancher_token: ${{ secrets.TF_VAR_RANCHER_TOKEN }}
-          TF_VAR_rancher_url: ${{ secrets.TF_VAR_RANCHER_URL }}
-          TF_VAR_subnet_id: ${{ secrets.TF_VAR_SUBNET_ID }}
-          TF_VAR_vpc_tag: ${{ secrets.TF_VAR_VPC_TAG }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+
+
+
+
+
+
+
+
+  # destroy_staging:
+  #   # The type of runner that the job will run on
+  #   runs-on: ubuntu-latest
+  #   container: elmoenco/tf_toolbox:latest
+  #   # Steps represent a sequence of tasks that will be executed as part of the job
+  #   steps:
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - uses: actions/checkout@v2
+
+  #     - name: terraform init
+  #       run: |
+  #         terraform init \
+  #           -backend-config="bucket=${TERRAFORM_BACKEND_S3_BUCKET}" \
+  #           -backend-config="key=${TERRAFORM_BACKEND_S3_KEY}" \
+  #           -backend-config="workspace_key_prefix=${TERRAFORM_BACKEND_S3_PREFIX}"
+  #       env:
+  #         AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #         TERRAFORM_BACKEND_S3_BUCKET: ${{ secrets.TERRAFORM_BACKEND_S3_BUCKET }}
+  #         TERRAFORM_BACKEND_S3_KEY: ${{ secrets.TERRAFORM_BACKEND_S3_KEY }}
+  #         TERRAFORM_BACKEND_S3_PREFIX: ${{ secrets.TERRAFORM_BACKEND_S3_PREFIX }}
+
+  #     - name: terraform destroy
+  #       run: |
+  #         echo "Dirty fix for Rancher. Remove nodepools from state, so that Rancher can delete cluster and ec2 nodes"
+  #         terraform state rm 'rancher2_node_pool.ctrl'
+  #         terraform state rm 'rancher2_node_pool.etcd'
+  #         terraform state rm 'rancher2_node_pool.worker'
+  #         echo "now lets destroy"
+  #         terraform destroy -auto-approve
+  #       env:
+  #         TF_VAR_clustername: "master-staging"
+  #         TF_VAR_controlplane_node_iam_instance_profile: ${{ secrets.TF_VAR_CONTROLPLANE_NODE_IAM_INSTANCE_PROFILE }}
+  #         TF_VAR_etcd_node_iam_instance_profile: ${{ secrets.TF_VAR_ETCD_NODE_IAM_INSTANCE_PROFILE }}
+  #         TF_VAR_worker_node_iam_instance_profile: ${{ secrets.TF_VAR_WORKER_NODE_IAM_INSTANCE_PROFILE }}
+  #         TF_VAR_rancher_aws_cloud_credential_name: ${{ secrets.TF_VAR_RANCHER_AWS_CLOUD_CREDENTIAL_NAME }}
+  #         TF_VAR_rancher_token: ${{ secrets.TF_VAR_RANCHER_TOKEN }}
+  #         TF_VAR_rancher_url: ${{ secrets.TF_VAR_RANCHER_URL }}
+  #         TF_VAR_subnet_id: ${{ secrets.TF_VAR_SUBNET_ID }}
+  #         TF_VAR_vpc_tag: ${{ secrets.TF_VAR_VPC_TAG }}
+  #         AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

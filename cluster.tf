@@ -17,8 +17,21 @@ resource "aws_security_group" "rancher-nodes" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to tags, e.g. because a management agent
+      # updates these based on some ruleset managed elsewhere.
+      tags,
+    ]
+  }
 }
 
+resource "local_file" "sgid" {
+  filename        = "${path.module}/sgid.txt"
+  content         = aws_security_group.rancher-nodes.id
+  file_permission = "0600"
+}
 
 #################
 # Rancher cluster
@@ -149,4 +162,20 @@ resource "rancher2_node_pool" "worker" {
 resource "rancher2_cluster_sync" "cluster" {
   cluster_id    = rancher2_cluster.cluster_ec2.id
   node_pool_ids = [rancher2_node_pool.ctrl.id, rancher2_node_pool.etcd.id, rancher2_node_pool.worker.id]
+}
+
+resource "local_file" "kubeconfig" {
+  filename        = "${path.module}/.kube/config"
+  content         = rancher2_cluster.cluster_ec2.kube_config
+  file_permission = "0600"
+
+  depends_on = [rancher2_cluster_sync.cluster]
+}
+
+resource "local_file" "clusterid" {
+  filename        = "${path.module}/clusterid.txt"
+  content         = rancher2_cluster.cluster_ec2.id
+  file_permission = "0600"
+
+  depends_on = [rancher2_cluster_sync.cluster]
 }
