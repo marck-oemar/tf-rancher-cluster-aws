@@ -1,5 +1,5 @@
 # clustername that should be unique. all relevant AWS resources will have this clustername in it's resource name
-clustername = "test10"
+#clustername = "test10"
 
 
 ### AWS specific variables
