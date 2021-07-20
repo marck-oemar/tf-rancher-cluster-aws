@@ -6,6 +6,15 @@ The config is based on Ranchers documentation:
 - https://rancher.com/docs/rancher/v2.x/en/cluster-provisioning/rke-clusters/node-pools/ec2/
 - https://rancher.com/docs/rancher/v2.x/en/cluster-provisioning/rke-clusters/cloud-providers/amazon/
 
+## Used technology
+- https://aws.amazon.com/ec2/
+- https://aws.amazon.com/iam/
+- https://rancher.com
+- https://rancher.com/docs/rke/latest/en/config-options/cloud-providers/aws/
+- https://github.com/rancher/machine
+- https://kubernetes.io
+- https://www.selenium.dev
+- https://docs.pytest.org/en/6.2.x/
 
 
 ## Stack resources

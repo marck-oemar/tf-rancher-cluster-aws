@@ -1,6 +1,4 @@
-# This is a basic workflow to help you get started with Actions
-
-name: CI
+name: CI pipeline for Terraform config for deploying a RKE cluster in AWS
 
 # Controls when the workflow will run
 on:
@@ -131,6 +129,8 @@ jobs:
           kubectl get service hello-kubernetes-my-hello-kubernetes
           kubectl get service hello-kubernetes-my-hello-kubernetes -o json | jq -r '.status.loadBalancer.ingress[0].hostname' > aws_lb_hostname.txt
           kubectl get service hello-kubernetes-my-hello-kubernetes -o json | jq -r '.spec.ports[0].port' > aws_lb_port.txt
+          echo "lets wait a bit until the AWS L4 Loadbalancer has a healthy state"
+          sleep 30
 
       - name: "Upload aws_lb_hostname"
         uses: actions/upload-artifact@v2
@@ -171,7 +171,7 @@ jobs:
 
   test_uninstall_hello_chart:
     needs: test_selenium_hello
-    if: always()
+    #if: always()
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     container: bskim45/helm-kubectl-jq
