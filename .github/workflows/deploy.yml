@@ -36,5 +36,16 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
           echo $AWS_DEFAULT_REGION
+          terraform init \
+            -backend-config="bucket=${TERRAFORM_BACKEND_S3_BUCKET}" \
+            -backend-config="key=${TERRAFORM_BACKEND_S3_KEY}" \
+            -backend-config="workspace_key_prefix=${TERRAFORM_BACKEND_S3_PREFIX}"
         env:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TERRAFORM_BACKEND_S3_BUCKET: ${{ secrets.TERRAFORM_BACKEND_S3_BUCKET }}
+          TERRAFORM_BACKEND_S3_KEY: ${{ secrets.TERRAFORM_BACKEND_S3_KEY }}
+          TERRAFORM_BACKEND_S3_PREFIX: ${{ secrets.TERRAFORM_BACKEND_S3_PREFIX }}
+          
+
