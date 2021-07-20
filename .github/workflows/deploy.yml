@@ -97,6 +97,21 @@ jobs:
           export KUBECONFIG="config"
           helm repo add opsmx https://helmcharts.opsmx.com/ 
           helm upgrade --install my-hello-kubernetes opsmx/hello-kubernetes --version 1.0.3 --wait
+          kubectl get service hello-kubernetes-my-hello-kubernetes
+          kubectl get service hello-kubernetes-my-hello-kubernetes -o json | jq -r '.status.loadBalancer.ingress[0].hostname' > aws_lb_hostname.txt
+          kubectl get service hello-kubernetes-my-hello-kubernetes -o json | jq -r '.spec.ports[0].port' > aws_lb_port.txt
+
+      - name: "Upload aws_lb_hostname"
+        uses: actions/upload-artifact@v2
+        with:
+          name: aws_lb_hostname
+          path: aws_lb_hostname.txt
+
+      - name: "Upload aws_lb_port"
+        uses: actions/upload-artifact@v2
+        with:
+          name: aws_lb_port
+          path: aws_lb_port.txt
   # destroy_staging:
   #   needs: test_staging
   #   # The type of runner that the job will run on
