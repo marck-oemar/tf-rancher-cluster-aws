@@ -64,13 +64,14 @@ jobs:
           name: kubeconfig
           path: .kube/config
 
+      # not needed anymore
       - name: "Upload clusterid"
         uses: actions/upload-artifact@v2
         with:
           name: clusterid
           path: clusterid.txt
 
-  test_staging:
+  test_install_hello_chart:
     needs: deploy_staging
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -84,12 +85,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: kubeconfig
-
-      # nog nodig??????????????
-      - name: "Download clusterid"
-        uses: actions/download-artifact@v2
-        with:
-          name: clusterid
 
       - name: "install chart opsmx/hello-kubernetes"
         run: |
@@ -112,6 +107,31 @@ jobs:
         with:
           name: aws_lb_port
           path: aws_lb_port.txt
+
+  test_selenium_hello:
+    needs: test_install_hello_chart
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container: joyzoursky/python-chromedriver:3.7
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: "Download aws_lb_hostname"
+        uses: actions/download-artifact@v2
+        with:
+          name: aws_lb_hostname
+
+      - name: "Download aws_lb_port"
+        uses: actions/download-artifact@v2
+        with:
+          name: aws_lb_port
+
+      - name: "frontend test hello app"
+        run: |
+          pip install -r tests/requirements.txt
+          URL="http://$(cat aws_lb_hostname.txt):$(cat aws_lb_port.txt)" pytest tests/selenium_test_helloworld.py
   # destroy_staging:
   #   needs: test_staging
   #   # The type of runner that the job will run on
