@@ -66,8 +66,8 @@ variable "aws-region" {
 }
 
 variable "vpc_tag" {
-  type      = string
-  sensitive = true
+  type = string
+  #sensitive = true
 }
 
 variable "subnet_id" {
