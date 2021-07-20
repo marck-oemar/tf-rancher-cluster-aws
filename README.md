@@ -7,6 +7,7 @@ The config is based on Ranchers documentation:
 - https://rancher.com/docs/rancher/v2.x/en/cluster-provisioning/rke-clusters/cloud-providers/amazon/
 
 
+
 ## Stack resources
 The Terraform config will create the following resources.
 
@@ -37,3 +38,14 @@ For seperation of concern, some resources are decoupled and scoped out of this t
 
 ## Usage
 Simply assign the variables and terraform apply.
+
+## Quirk: Delete Nodepools/Cluster
+- deletion of nodepools before deletion of cluster does not delete actual AWS ec2 nodes, more precise: when deleting a nodepool, Rancher does not delete the AWS ec2 nodes.
+- What does work is deleting the entire cluster, which will signal Rancher Machine (=Docker Machine fork) to terminate the ec2 nodes. In other words, delete cluster is a first class orchestration activity.
+
+- Terraform work around for cluster deletion (this will work): 
+  1. remove the node pools from tf state
+  2. terraform destroy
+
+Also, deleting the Security Group will take a while because of referenced EC2 instances. AWS takes a few minutes to completely terminate and delete EC2 Instance resources.
+

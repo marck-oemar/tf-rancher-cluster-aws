@@ -19,7 +19,7 @@ variable "etcd-node-quantity" {
 variable "worker-node-quantity" {
   description = "how many"
   type        = string
-  default     = 2
+  default     = 1
 }
 
 variable "dockerurl" {

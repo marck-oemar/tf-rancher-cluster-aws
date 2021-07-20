@@ -1,8 +1,8 @@
-/*
-resource "aws_security_group" "node-sg" {
-  name = "ec2-node-rancher-${var.clustername}"
-  description = "ec2-node-rancher"
-  vpc_id      = "${data.aws_vpc.active_vpc.id}"
+
+resource "aws_security_group" "rancher-nodes" {
+  name                   = "ec2-node-rancher-${var.clustername}"
+  revoke_rules_on_delete = true
+  vpc_id                 = data.aws_vpc.active_vpc.id
 
   egress {
     from_port   = 0
@@ -17,75 +17,8 @@ resource "aws_security_group" "node-sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = {
-    "kubernetes.io/cluster/${var.clustername}" = "owned"
-  }
-}
-*/
-
-
-#######
-
-resource "rancher2_node_template" "marck-rancher-controlplane" {
-  name                = "ec2-node-rancher-control-${var.clustername}"
-  cloud_credential_id = data.rancher2_cloud_credential.aws.id
-  engine_install_url  = var.dockerurl
-  amazonec2_config {
-    ami      = var.ami
-    ssh_user = var.ami-ssh-user
-    region   = var.aws-region
-    #security_group = ["ec2-node-rancher-${var.clustername}"]
-    security_group       = []
-    subnet_id            = data.aws_subnet.subnet.id
-    vpc_id               = data.aws_vpc.active_vpc.id
-    zone                 = var.aws-zone
-    root_size            = 16
-    instance_type        = "t2.medium"
-    iam_instance_profile = var.controlplane-node-iam-instance-profile
-    #tags = "kubernetes.io/cluster/${var.clustername},owned"
-  }
 }
 
-resource "rancher2_node_template" "marck-rancher-etcd" {
-  name                = "ec2-node-rancher-etcd-${var.clustername}"
-  cloud_credential_id = data.rancher2_cloud_credential.aws.id
-  engine_install_url  = var.dockerurl
-  amazonec2_config {
-    ami      = var.ami
-    ssh_user = var.ami-ssh-user
-    region   = var.aws-region
-    #security_group = ["ec2-node-rancher-${var.clustername}"]
-    security_group       = []
-    subnet_id            = data.aws_subnet.subnet.id
-    vpc_id               = data.aws_vpc.active_vpc.id
-    zone                 = var.aws-zone
-    root_size            = 16
-    instance_type        = "t2.medium"
-    iam_instance_profile = var.etcd-node-iam-instance-profile
-    #tags = "kubernetes.io/cluster/${var.clustername},owned"
-  }
-}
-
-resource "rancher2_node_template" "marck-rancher-worker" {
-  name                = "ec2-node-rancher-worker-${var.clustername}"
-  cloud_credential_id = data.rancher2_cloud_credential.aws.id
-  engine_install_url  = var.dockerurl
-  amazonec2_config {
-    ami      = var.ami
-    ssh_user = var.ami-ssh-user
-    region   = var.aws-region
-    #security_group = ["ec2-node-rancher-${var.clustername}"]
-    security_group       = []
-    subnet_id            = data.aws_subnet.subnet.id
-    vpc_id               = data.aws_vpc.active_vpc.id
-    zone                 = var.aws-zone
-    root_size            = 16
-    instance_type        = "t2.medium"
-    iam_instance_profile = var.worker-node-iam-instance-profile
-    #tags = "kubernetes.io/cluster/${var.clustername},owned"
-  }
-}
 
 #################
 # Rancher cluster
@@ -115,7 +48,68 @@ resource "rancher2_cluster" "cluster_ec2" {
       }
     }
   }
+  depends_on = [rancher2_node_template.marck-rancher-controlplane, rancher2_node_template.marck-rancher-etcd, rancher2_node_template.marck-rancher-worker]
 }
+
+
+
+resource "rancher2_node_template" "marck-rancher-controlplane" {
+  name                = "ec2-node-rancher-control-${var.clustername}"
+  cloud_credential_id = data.rancher2_cloud_credential.aws.id
+  engine_install_url  = var.dockerurl
+  amazonec2_config {
+    ami                  = var.ami
+    ssh_user             = var.ami-ssh-user
+    region               = var.aws-region
+    security_group       = ["ec2-node-rancher-${var.clustername}"]
+    subnet_id            = data.aws_subnet.subnet.id
+    vpc_id               = data.aws_vpc.active_vpc.id
+    zone                 = var.aws-zone
+    root_size            = 16
+    instance_type        = "t2.medium"
+    iam_instance_profile = var.controlplane-node-iam-instance-profile
+  }
+}
+
+resource "rancher2_node_template" "marck-rancher-etcd" {
+  name                = "ec2-node-rancher-etcd-${var.clustername}"
+  cloud_credential_id = data.rancher2_cloud_credential.aws.id
+  engine_install_url  = var.dockerurl
+  amazonec2_config {
+    ami                  = var.ami
+    ssh_user             = var.ami-ssh-user
+    region               = var.aws-region
+    security_group       = ["ec2-node-rancher-${var.clustername}"]
+    subnet_id            = data.aws_subnet.subnet.id
+    vpc_id               = data.aws_vpc.active_vpc.id
+    zone                 = var.aws-zone
+    root_size            = 16
+    instance_type        = "t2.medium"
+    iam_instance_profile = var.etcd-node-iam-instance-profile
+  }
+}
+
+resource "rancher2_node_template" "marck-rancher-worker" {
+  name                = "ec2-node-rancher-worker-${var.clustername}"
+  cloud_credential_id = data.rancher2_cloud_credential.aws.id
+  engine_install_url  = var.dockerurl
+  amazonec2_config {
+    ami                  = var.ami
+    ssh_user             = var.ami-ssh-user
+    region               = var.aws-region
+    security_group       = ["ec2-node-rancher-${var.clustername}"]
+    subnet_id            = data.aws_subnet.subnet.id
+    vpc_id               = data.aws_vpc.active_vpc.id
+    zone                 = var.aws-zone
+    root_size            = 16
+    instance_type        = "t2.medium"
+    iam_instance_profile = var.worker-node-iam-instance-profile
+  }
+}
+
+
+
+
 
 ######
 
