@@ -1,0 +1,16 @@
+{
+  "name": "tf-rancher-cluster-aws",
+  "version": "0.0.0",
+  "repository": "https://github.com/marck-oemar/tf-rancher-cluster-aws",
+  "author": "marck.oemar@gmail.com",
+  "license": "N/A",
+  "devDependencies": {
+    "@saithodev/semantic-release-backmerge": "^1.1.1",
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/commit-analyzer": "^8.0.1",
+    "@semantic-release/exec": "^5.0.0",
+    "@semantic-release/git": "^9.0.0",
+    "@semantic-release/release-notes-generator": "^9.0.1",
+    "semantic-release": "^17.0.4"
+  }
+}
