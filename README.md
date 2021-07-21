@@ -68,3 +68,4 @@ The Github Actions pipeline contains an end-2-end approach:
 - Acceptance test the application, using (overkill) Selenium
 - Clean-up
 
+##
