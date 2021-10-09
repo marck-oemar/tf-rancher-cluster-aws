@@ -20,3 +20,11 @@ vagrant/local_config.yaml
 
 # MacOS junk
 .DS_Store
+
+.pytest_cache
+
+yarn.lock 
+
+.yarn-integrity
+
+.terraform.lock.hcl 

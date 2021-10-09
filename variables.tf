@@ -80,17 +80,17 @@ variable "aws-zone" {
 }
 
 #### Variables for Amazon Cloud Provider https://rancher.com/docs/rancher/v2.x/en/cluster-provisioning/rke-clusters/cloud-providers/amazon/ 
-variable "controlplane_node_iam_instance_profile" {
-  type      = string
-  sensitive = true
-}
+# variable "controlplane_node_iam_instance_profile" {
+#   type      = string
+#   sensitive = true
+# }
 
-variable "etcd_node_iam_instance_profile" {
-  type      = string
-  sensitive = true
-}
+# variable "etcd_node_iam_instance_profile" {
+#   type      = string
+#   sensitive = true
+# }
 
-variable "worker_node_iam_instance_profile" {
-  type      = string
-  sensitive = true
-}
+# variable "worker_node_iam_instance_profile" {
+#   type      = string
+#   sensitive = true
+# }
